@@ -2,14 +2,19 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
+using System.Threading.Tasks;
 using AutoCompleteTextBox.Demo.Model;
 using AutoCompleteTextBox.Editors;
+using Newtonsoft.Json;
 
 namespace AutoCompleteTextBox.Demo.Providers
 {
     public class StateSuggestionProvider : IComboSuggestionProvider
     {
         public IEnumerable<State> ListOfStates { get; set; }
+
+        private static HttpClient _httpClient = new HttpClient();
 
         public State GetExactSuggestion(string filter)
         {
@@ -19,23 +24,27 @@ namespace AutoCompleteTextBox.Demo.Providers
                     .FirstOrDefault(state => string.Equals(state.Name, filter, StringComparison.CurrentCultureIgnoreCase));
         }
 
-        public IEnumerable<State> GetSuggestions(string filter)
+        public async Task<IEnumerable<State>> GetSuggestions(string filter)
         {
             if (string.IsNullOrWhiteSpace(filter)) return null;
-            System.Threading.Thread.Sleep(1000);
+            var result = await (await _httpClient.GetAsync("https://cat-fact.herokuapp.com/facts/random?animal_type=cat&amount=200")).Content.ReadAsStringAsync();
+            var states = JsonConvert.DeserializeObject<List<State>>(result) ?? new List<State>();
+
+
             return
-                ListOfStates
+                states
                     .Where(state => state.Name.IndexOf(filter, StringComparison.CurrentCultureIgnoreCase) > -1)
                     .ToList();
         }
 
-        IEnumerable IComboSuggestionProvider.GetSuggestions(string filter)
+       async Task<IEnumerable> IComboSuggestionProvider.GetSuggestions(string filter)
         {
-            return GetSuggestions(filter);
+            return await GetSuggestions(filter);
         }
-        IEnumerable IComboSuggestionProvider.GetFullCollection()
+
+       Task<IEnumerable> IComboSuggestionProvider.GetFullCollection()
         {
-            return ListOfStates.ToList();
+            return Task.FromResult<IEnumerable>(ListOfStates.ToList());
         }
 
         public StateSuggestionProvider()
@@ -43,5 +52,8 @@ namespace AutoCompleteTextBox.Demo.Providers
             var states = StateFactory.CreateStateList();
             ListOfStates = states;
         }
+
+
+
     }
 }

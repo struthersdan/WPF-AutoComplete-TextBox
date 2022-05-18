@@ -2,13 +2,16 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using Newtonsoft.Json;
 
 namespace AutoCompleteTextBox.Demo.Model
 {
     [DebuggerDisplay("State = {Name} ({Abbreviation})")]
     public class State
     {
+        [JsonProperty("text")]
         public string Name { get; set; }
+        [JsonProperty("user")]
         public string Abbreviation { get; set; }
     }
 

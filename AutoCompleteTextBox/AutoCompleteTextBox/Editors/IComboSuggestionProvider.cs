@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using System.Threading.Tasks;
 
 
 namespace AutoCompleteTextBox.Editors
@@ -8,8 +9,8 @@ namespace AutoCompleteTextBox.Editors
 
         #region Public Methods
 
-        IEnumerable GetSuggestions(string filter);
-        IEnumerable GetFullCollection();
+        Task<IEnumerable> GetSuggestions(string filter);
+        Task<IEnumerable> GetFullCollection();
 
         #endregion Public Methods
     }

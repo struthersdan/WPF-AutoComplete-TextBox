@@ -148,7 +148,7 @@
                             SelectedItem="{Binding State, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}"
                             Style="{StaticResource MaterialAutoCompleteComboBox}"
                             Watermark="Select a state" />
-
+                        <TextBlock Text="{Binding State.Abbreviation}"></TextBlock>
                     </StackPanel>
 
                     <StackPanel Margin="0,20,0,0" Orientation="Vertical">
